@@ -1,0 +1,58 @@
+rule "Andreas-Devices-Check"
+when
+    Item anwesenheit_andreas_iphone1 changed or
+    Item anwesenheit_andreas_iphone2 changed or
+    Item anwesenheit_andreas_android1 changed or
+    Item anwesenheit_andreas_android2 changed
+then
+    var String andreasiPhone1  = transform("MAP","anwesenheit.map", anwesenheit_andreas_iphone1.state.toString)
+    var String andreasiPhone2  = transform("MAP","anwesenheit.map", anwesenheit_andreas_iphone2.state.toString)
+    var String andreasAndroid1 = transform("MAP","anwesenheit.map", anwesenheit_andreas_android1.state.toString)
+    var String andreasAndroid2 = transform("MAP","anwesenheit.map", anwesenheit_andreas_android2.state.toString)
+
+    logInfo("Andreas-Device-Status-Change", "Andreas iPhone Status: " + andreasiPhone1 + "/" + andreasiPhone2 + ", Andreas Android Status: " + andreasAndroid1 + "/" + andreasAndroid2)
+    //pushover("Andreas iPhone Status: " + andreasiPhone1 + "/" + andreasiPhone2 + ", Andreas Android Status: " + andreasAndroid1 + "/" + andreasAndroid2)
+
+    //Gruppiere pro Device, denn nur ein Kontrollpunkt muss mindestens ein Gerät sehen
+    var Boolean anwesenheit_andreas_iphone  = (anwesenheit_andreas_iphone1.state == OPEN || anwesenheit_andreas_iphone2.state == OPEN)
+    var Boolean anwesenheit_andreas_android = (anwesenheit_andreas_android1.state == OPEN || anwesenheit_andreas_android2.state == OPEN)
+
+    if ((anwesenheit_andreas_iphone || anwesenheit_andreas_android) && anwesenheit_andreas.state != OPEN)
+    {
+        publish("mqttbroker","zuhause/personen/andreas/anwesend/haus","1")
+        pushover("Andreas Device-Status hat Anwesenheitszustand auf ANWESEND gesetzt")
+    }
+
+    if (!anwesenheit_andreas_iphone && !anwesenheit_andreas_android && anwesenheit_andreas.state != CLOSED)
+    {
+        publish("mqttbroker","zuhause/personen/andreas/anwesend/haus","0")
+        pushover("Andreas Device-Status hat Anwesenheitszustand auf WEG gesetzt")
+    }
+end
+
+rule "Maike-Devices-Check"
+when
+    Item anwesenheit_maike_android1 changed or
+    Item anwesenheit_maike_android2 changed
+then
+    var String maikeAndroid1 = transform("MAP","anwesenheit.map", anwesenheit_maike_android1.state.toString)
+    var String maikeAndroid2 = transform("MAP","anwesenheit.map", anwesenheit_maike_android2.state.toString)
+
+    logInfo("Maike-Device-Status-Change", "Maike Android Status: " + maikeAndroid1 + "/" + maikeAndroid2)
+    //pushover("Maike Android Status: " + maikeAndroid1 + "/" + maikeAndroid2)
+
+    //Gruppiere pro Device, denn nur ein Kontrollpunkt muss mindestens ein Gerät sehen    
+    var Boolean anwesenheit_maike_android = (anwesenheit_maike_android1.state == OPEN || anwesenheit_maike_android2.state == OPEN)
+
+    if (anwesenheit_maike_android && anwesenheit_maike.state != OPEN)
+    {
+        publish("mqttbroker","zuhause/personen/maike/anwesend/haus","1")
+        pushover("Maike Device-Status hat Anwesenheitszustand auf ANWESEND gesetzt")
+    }
+
+    if (!anwesenheit_maike_android && anwesenheit_maike.state != CLOSED)
+    {
+        publish("mqttbroker","zuhause/personen/maike/anwesend/haus","0")
+        pushover("Maike Device-Status hat Anwesenheitszustand auf WEG gesetzt")
+    }
+end

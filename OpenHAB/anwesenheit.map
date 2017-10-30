@@ -1,0 +1,7 @@
+1=OPEN
+0=CLOSED
+CLOSED=weg
+OPEN=anwesend
+-=CLOSED
+NULL=CLOSED
+null=CLOSED

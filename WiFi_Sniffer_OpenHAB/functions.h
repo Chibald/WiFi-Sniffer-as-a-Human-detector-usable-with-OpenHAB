@@ -1,7 +1,8 @@
 // This-->tab == "functions.h"
 
 // Expose Espressif SDK functionality
-extern "C" {
+extern "C" 
+{
 #include "user_interface.h"
   typedef void (*freedom_outside_cb_t)(uint8 status);
   int  wifi_register_send_pkt_freedom_cb(freedom_outside_cb_t cb);
@@ -21,15 +22,34 @@ int nothing_new = 0;
 clientinfo clients_known[MAX_CLIENTS_TRACKED];            // Array to save MACs of known CLIENTs
 int clients_known_count = 0;                              // Number of known CLIENTs
 
+//Andreas adds:
+clientinfo clients_purged[MAX_CLIENTS_TRACKED];           // Array to remind purged MACs of known CLIENTs
+int clients_purged_count = 0;                             // Number of purged CLIENTs
+
+int purge_client(clientinfo ci)
+{
+  memcpy(&clients_purged[clients_purged_count], &ci, sizeof(ci));
+  clients_purged_count++;
+/* Serial.println();
+   Serial.print("Adding Client to purge '");
+   Serial.print(formatMac1(ci.station));
+   Serial.print("' Channel ");
+   Serial.print(ci.channel);
+   Serial.print(", RSSI ");
+   Serial.println(ci.rssi);*/  
+   return clients_purged_count;
+}
 
 
 
-String formatMac1(uint8_t mac[ETH_MAC_LEN]) {
+
+String formatMac1(uint8_t mac[ETH_MAC_LEN]) 
+{
   String hi = "";
   for (int i = 0; i < ETH_MAC_LEN; i++) {
     if (mac[i] < 16) hi = hi + "0" + String(mac[i], HEX);
     else hi = hi + String(mac[i], HEX);
-    if (i < 5) hi = hi + ":";
+    //if (i < 5) hi = hi + ":";    
   }
   return hi;
 }
@@ -46,6 +66,7 @@ int register_beacon(beaconinfo beacon)
       break;
     }   // AP known => Set known flag
   }
+  
   if (! known && (beacon.err == 0))  // AP is NEW, copy MAC to array and return it
   {
     beacon.lastDiscoveredTime = millis();
@@ -59,8 +80,8 @@ int register_beacon(beaconinfo beacon)
 
     aps_known_count++;
 
-    if ((unsigned int) aps_known_count >=
-        sizeof (aps_known) / sizeof (aps_known[0]) ) {
+    if ((unsigned int)aps_known_count >= sizeof(aps_known) / sizeof(aps_known[0]) ) 
+    {
       Serial.printf("exceeded max aps_known\n");
       aps_known_count = 0;
     }
@@ -68,27 +89,35 @@ int register_beacon(beaconinfo beacon)
   return known;
 }
 
-int register_client(clientinfo ci) {
+int register_client(clientinfo ci) 
+{
   int known = 0;   // Clear known flag
   for (int u = 0; u < clients_known_count; u++)
   {
-    if (! memcmp(clients_known[u].station, ci.station, ETH_MAC_LEN)) {
+    if (! memcmp(clients_known[u].station, ci.station, ETH_MAC_LEN)) 
+    {
       clients_known[u].lastDiscoveredTime = millis();
       clients_known[u].rssi = ci.rssi;
       known = 1;
       break;
     }
   }
-  if (! known) {
+  
+  if (! known) 
+  {
     ci.lastDiscoveredTime = millis();
     // search for Assigned AP
-    for (int u = 0; u < aps_known_count; u++) {
-      if (! memcmp(aps_known[u].bssid, ci.bssid, ETH_MAC_LEN)) {
+    for (int u = 0; u < aps_known_count; u++) 
+    {
+      if (! memcmp(aps_known[u].bssid, ci.bssid, ETH_MAC_LEN)) 
+      {
         ci.channel = aps_known[u].channel;
         break;
       }
     }
-    if (ci.channel != 0) {
+    
+    if (ci.channel != 0) 
+    {
       memcpy(&clients_known[clients_known_count], &ci, sizeof(ci));
       /*   Serial.println();
          Serial.print("Register Client ");
@@ -101,9 +130,9 @@ int register_client(clientinfo ci) {
       clients_known_count++;
     }
 
-    if ((unsigned int) clients_known_count >=
-        sizeof (clients_known) / sizeof (clients_known[0]) ) {
-      Serial.printf("exceeded max clients_known\n");
+    if ((unsigned int) clients_known_count >= sizeof (clients_known) / sizeof (clients_known[0]) ) 
+    {
+      Serial.printf("Warning: Exceeded max clients_known\n");
       clients_known_count = 0;
     }
   }
@@ -165,22 +194,27 @@ void promisc_cb(uint8_t *buf, uint16_t len)
 {
   int i = 0;
   uint16_t seq_n_new = 0;
-  if (len == 12) {
+  if (len == 12) 
+  {
     struct RxControl *sniffer = (struct RxControl*) buf;
   } else if (len == 128) {
     struct sniffer_buf2 *sniffer = (struct sniffer_buf2*) buf;
     struct beaconinfo beacon = parse_beacon(sniffer->buf, 112, sniffer->rx_ctrl.rssi);
-    if (register_beacon(beacon) == 0) {
+    if (register_beacon(beacon) == 0) 
+    {
       print_beacon(beacon);
       nothing_new = 0;
     }
   } else {
     struct sniffer_buf *sniffer = (struct sniffer_buf*) buf;
     //Is data or QOS?
-    if ((sniffer->buf[0] == 0x08) || (sniffer->buf[0] == 0x88)) {
+    if ((sniffer->buf[0] == 0x08) || (sniffer->buf[0] == 0x88)) 
+    {
       struct clientinfo ci = parse_data(sniffer->buf, 36, sniffer->rx_ctrl.rssi, sniffer->rx_ctrl.channel);
-      if (memcmp(ci.bssid, ci.station, ETH_MAC_LEN)) {
-        if (register_client(ci) == 0) {
+      if (memcmp(ci.bssid, ci.station, ETH_MAC_LEN)) 
+      {
+        if (register_client(ci) == 0) 
+        {
           print_client(ci);
           nothing_new = 0;
         }

@@ -1,0 +1,45 @@
+//Anwesenheit
+Contact anwesenheit_andreas "Andreas [MAP(anwesenheit.map):%s]"  <man_2> (Alles,Anwesenheit)
+{
+    mqtt="<[mqttbroker:zuhause/personen/andreas/anwesend/haus:state:MAP(anwesenheit.map)]", autoupdate="false"
+}
+
+Contact anwesenheit_maike   "Maike [MAP(anwesenheit.map):%s]"  <woman_2> (Alles,Anwesenheit)
+{
+    mqtt="<[mqttbroker:zuhause/personen/maike/anwesend/haus:state:MAP(anwesenheit.map)]", autoupdate="false"
+}
+
+/* ************************************************************************************************************** */
+
+
+Contact anwesenheit_andreas_android1 "Andreas Android 1 [MAP(anwesenheit.map):%s]"  <man_2> (Alles,AnwesenheitDevices)
+{
+    mqtt="<[mqttbroker:wifi/sniffer1:state:JSONPATH($.MAC.ec1f7208aaaa):.*ec1f7208aaaa.*]", autoupdate="false"
+}
+
+Contact anwesenheit_andreas_android2 "Andreas Android 2 [MAP(anwesenheit.map):%s]"  <man_2> (Alles,AnwesenheitDevices)
+{
+    mqtt="<[mqttbroker:wifi/sniffer2:state:JSONPATH($.MAC.ec1f7208aaaa):.*ec1f7208aaaa.*]", autoupdate="false"
+}
+
+
+Contact anwesenheit_andreas_iphone1 "Andreas iPhone 1 [MAP(anwesenheit.map):%s]"  <man_2> (Alles,AnwesenheitDevices)
+{
+    mqtt="<[mqttbroker:wifi/sniffer1:state:JSONPATH($.MAC.d04f7ecfaaaa):.*d04f7ecfaaaa.*]", autoupdate="false"
+}
+
+Contact anwesenheit_andreas_iphone2 "Andreas iPhone 2 [MAP(anwesenheit.map):%s]"  <man_2> (Alles,AnwesenheitDevices)
+{
+    mqtt="<[mqttbroker:wifi/sniffer2:state:JSONPATH($.MAC.d04f7ecfaaaa):.*d04f7ecfaaaa.*]", autoupdate="false"
+}
+
+
+Contact anwesenheit_maike_android1 "Maike Android 1 [MAP(anwesenheit.map):%s]"  <woman_2> (Alles,AnwesenheitDevices)
+{
+    mqtt="<[mqttbroker:wifi/sniffer1:state:JSONPATH($.MAC.ec107b5cbbbb):.*ec107b5cbbbb.*]", autoupdate="false"
+}
+
+Contact anwesenheit_maike_android2 "Maike Android 2 [MAP(anwesenheit.map):%s]"  <woman_2> (Alles,AnwesenheitDevices)
+{
+    mqtt="<[mqttbroker:wifi/sniffer2:state:JSONPATH($.MAC.ec107b5cbbbb):.*ec107b5cbbbb.*]", autoupdate="false"
+}

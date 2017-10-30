@@ -88,5 +88,4 @@
   DEVICE: 6cadf84a419d ==> [                       HOME-30C2]  88cb8787697a   11    -89
   BEACON: <=============== [           Verizon-SM-G935V-6526]  a608ea306526   11    -92
 
-
 */
