@@ -14,7 +14,7 @@
 
   This software is based on the work of Ray Burnette: https://www.hackster.io/rayburne/esp8266-mini-sniff-f6b93a
 
-  This software is modified and extended by Dipl.-Inform (FH) Andreas Link, http://AndreasLink.de to be usable with OpenHAB as a Contact-item (http://openhab.org).
+  This software is modified and extended by Dipl.-Inform. (FH) Andreas Link, http://AndreasLink.de to be usable with OpenHAB as a Contact-item (http://openhab.org).
 
     Andreas iPhone  : d04f7ecfaaaa
     Andreas S6edge  : ec1f7208aaaa
@@ -63,7 +63,8 @@ IPAddress dns = IPAddress(192,168,0,1);
 
 StaticJsonBuffer<JBUFFER>  jsonBuffer;
 
-void setup() {
+void setup() 
+{
   Serial.begin(115200);
   Serial.printf("\n\nSDK version:%s\n\r", system_get_sdk_version());
   Serial.println(F("Human detector by Andreas Spiess. ESP8266 mini-sniff by Ray Burnette http://www.hackster.io/rayburne/projects"));
@@ -259,11 +260,7 @@ void sendDevices()
   // Purge json string
   jsonBuffer.clear();
   JsonObject& root = jsonBuffer.createObject();
-  //JsonArray& mac = root.createNestedArray("MAC");
-  //JsonArray& mac = jsonBuffer.createArray();
-  //JsonObject& macrssi = mac.createNestedObject();
   JsonObject& macrssi = root.createNestedObject("MAC");
-  //JsonArray& rssi = root.createNestedArray("RSSI");
 
   // add Beacons
   for (int u = 0; u < aps_known_count; u++) 
@@ -274,18 +271,6 @@ void sendDevices()
       //mac.add(deviceMac);
       //macrssi[deviceMac] = "Ch: " + String(aps_known[u].channel) + ", RSSI: " + String(aps_known[u].rssi) + "dBm";
       macrssi[deviceMac] = "OPEN";
-
-      /*
-      if (deviceMac != "") 
-      {
-        JsonObject& openhab = macrssi.createNestedObject(deviceMac);
-        openhab["status"] = "OPEN";
-        openhab["RSSI"] = aps_known[u].rssi;
-        openhab["channel"] = aps_known[u].channel;
-      }
-      */
-      
-      //    rssi.add(aps_known[u].rssi);
     }
   }
 
@@ -298,19 +283,6 @@ void sendDevices()
       //mac.add(deviceMac);
       //macrssi[deviceMac] = "Ch: " + String(clients_known[u].channel) + ", RSSI: " + String(clients_known[u].rssi) + "dBm";
       macrssi[deviceMac] = "OPEN";
-
-      /*
-      if (deviceMac != "") 
-      {
-        JsonObject& openhab = macrssi.createNestedObject(deviceMac);
-        openhab["status"] = "OPEN";
-        openhab["RSSI"] = clients_known[u].rssi;
-        openhab["channel"] = clients_known[u].channel;
-      }
-      */
-      
-      //mac["deviceMac"] = clients_known[u].rssi;
-      //rssi.add(clients_known[u].rssi);
     }
   }
 
@@ -326,12 +298,9 @@ void sendDevices()
   }
 
   Serial.println();
-  //Serial.printf("number of devices: %02d\n", mac.size());
   Serial.printf("Number of devices: %02d\n", macrssi.size());
   root.prettyPrintTo(Serial);
   root.printTo(jsonString);
-  //  Serial.println((jsonString));
-  //  Serial.println(root.measureLength());
   if (client.publish("wifi/sniffer1", jsonString) == 1)
   {
     Serial.println();
