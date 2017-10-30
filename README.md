@@ -14,6 +14,7 @@ In openHAB you simply define a phone as a Contact item in an MQTT binding and wi
     }
 
 Finally provided and formated JSON string of topic 'wifi/sniffer1' will e.g. look like:
+
     {
         "MAC": {
             "9ec7a6dacdf2": "OPEN",
